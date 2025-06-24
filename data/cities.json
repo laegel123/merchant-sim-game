@@ -1,0 +1,114 @@
+{
+  "cities": [
+    {
+      "name": "Western Gate",
+      "type": "town",
+      "q": 26,
+      "r": 5,
+      "population": 57000,
+      "connections": ["Summershield"],
+      "info": "A riverside town of abundant people and scarce trade.",
+      "link": "https://watabou.github.io/city-generator/?size=27&seed=1278924951&name=Western%20Gate&citadel=0&urban_castle=0&walls=1&shantytown=0&gates=1&plaza=0&temple=1&river=1&coast=0&sea=1.1864205939632004&from=perilous"
+    },
+    {
+      "name": "Wyrmbreezeham",
+      "type": "town",
+      "q": 16,
+      "r": 2,
+      "population": 31000,
+      "connections": ["Summershield"],
+      "info": "A forest town of abundant knowledge and scarce trade. Touchstone: a palace.",
+      "link": "https://watabou.github.io/city-generator/?size=29&seed=1728230734&name=Wyrmbreezeham&citadel=0&urban_castle=0&walls=0&shantytown=0&gates=2&plaza=1&temple=0&river=0&coast=0&sea=0.11969907680512364&from=perilous"
+    },
+    {
+      "name": "Summershield",
+      "type": "city",
+      "q": 19.7,
+      "r": 5.5,
+      "population": 120000,
+      "connections": ["Amberfell", "Wyrmbreezeham", "Western Gate"],
+      "info": "A mountain city of abundant beauty but scarce happyness. Touchstone: a haunted house.",
+      "link": "https://watabou.github.io/city-generator/?size=32&seed=1813721311&name=Summershield&citadel=1&urban_castle=0&walls=1&shantytown=0&gates=3&plaza=1&temple=1&river=0&coast=0&sea=1.423137621685461&from=perilous"
+    },
+    {
+      "name": "Dawnmyst",
+      "type": "town",
+      "q": 3.3,
+      "r": 6,
+      "population": 93000,
+      "connections": ["Meh"],
+      "info": "A forest town of scarce leadership. Touchstone: a renowned artificer.",
+      "link": "https://watabou.github.io/city-generator/?size=23&seed=1766367441&name=Dawnmyst&citadel=0&urban_castle=0&walls=0&shantytown=0&gates=3&plaza=1&temple=0&river=0&coast=0&sea=0.5886182405932892&from=perilous"
+    },
+    {
+      "name": "Amberfell",
+      "type": "city",
+      "q": 16.4,
+      "r": 13,
+      "population": 340000,
+      "connections": ["Far Farm", "Summershield", "Meh", "Deepbloom"],
+      "info": "A city of abundant beauty but scarce labour. Touchstone: a festival.",
+      "link": "https://watabou.github.io/city-generator/?size=40&seed=1933856677&name=Amberfell&citadel=1&urban_castle=1&walls=1&shantytown=1&gates=3&plaza=1&temple=1&river=0&coast=0&sea=0.2132766173282995&from=perilous"
+    },
+    {
+      "name": "Meh",
+      "type": "city",
+      "q": 7,
+      "r": 12,
+      "population": 42000,
+      "connections": ["Dawnmyst", "Amberfell"],
+      "info": "A city of abundant privacy and scarce safety. Touchstone: a haunted house.",
+      "link": "https://watabou.github.io/city-generator/?size=46&seed=2141187719&name=Meh&citadel=1&urban_castle=0&walls=1&shantytown=1&gates=2&plaza=1&temple=1&river=0&coast=0&sea=0.9610665836190183&from=perilous"
+    },
+    {
+      "name": "Far Farm",
+      "type": "town",
+      "q": 22.5,
+      "r": 20,
+      "population": 35000,
+      "connections": ["Amberfell", "River Bridge"],
+      "info": "A town of abundant people but scarce water. Touchstone: a temple.",
+      "link": "https://watabou.github.io/city-generator/?size=21&seed=1154911395&name=Far%20Farm&citadel=0&urban_castle=0&walls=1&shantytown=0&gates=3&plaza=1&temple=0&river=0&coast=0&sea=0.04886828830878636&from=perilous"
+    },
+    {
+      "name": "River Bridge",
+      "type": "village",
+      "q": 23.8,
+      "r": 22.8,
+      "population": 23000,
+      "connections": ["Far Farm", "Bluewick"],
+      "info": "A riverside village. Touchstone: a monument.",
+      "link": "https://watabou.github.io/village-generator/?seed=712144699&name=River%20Bridge&tags=river&from=perilous"
+    },
+    {
+      "name": "Deepbloom",
+      "type": "village",
+      "q": 11.5,
+      "r": 17,
+      "population": 11000,
+      "connections": ["Amberfell", "Clear Chapel"],
+      "info": "A riverside village of abundant defences and scarce religion.",
+      "link": "https://watabou.github.io/village-generator/?seed=989071862&name=Deepbloom&tags=river&from=perilous"
+    },
+    {
+      "name": "Bluewick",
+      "type": "city",
+      "q": 15.5,
+      "r": 24.5,
+      "population": 420000,
+      "info": "A city of abundant culture and scarce space.",
+      "connections": ["River Bridge"],
+      "link": "https://watabou.github.io/city-generator/?size=46&seed=1834478454&name=Bluewick&citadel=1&urban_castle=0&walls=1&shantytown=1&gates=2&plaza=1&temple=1&river=0&coast=0&sea=0.5786018346336679&from=perilous"
+    },
+    {
+      "name": "Clear Chapel",
+      "type": "village",
+      "q": 8.4,
+      "r": 22,
+      "population": 35000,
+      "connections": ["Deepbloom"],
+      "info": "A riverside village of abundant magic.",
+      "link": "https://watabou.github.io/village-generator/?seed=296499179&name=Clear%20Chapel&tags=river&from=perilous"
+    }
+  ]
+}
