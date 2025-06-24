@@ -12,7 +12,7 @@ const merchantManager = new MerchantManager();
 let products = [];
 let cities = [];
 let city = "Far Farm";
-x
+
 window.addMerchant = addMerchant;
 
 async function loadCities() {
