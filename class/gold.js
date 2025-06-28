@@ -1,21 +1,38 @@
 export class Gold {
     constructor(amount) {
-        this.gold = amount || 0;
+        this.myGold = amount || 0;
+        this.totalGold = amount || 0;
     }
 
-    addGold(amount) {
-        this.gold += amount;
+    addMyGold(amount) {
+        this.myGold += amount;
     }
 
-    subtractGold(amount) {
-        if (this.gold >= amount) {
-            this.gold -= amount;
+    subtractMyGold(amount) {
+        if (this.myGold >= amount) {
+            this.myGold -= amount;
         } else {
             console.warn("Not enough gold to subtract the specified amount.");
         }
     }
 
-    getGold() {
-        return this.gold;
+    getMyGold() {
+        return this.myGold;
+    }
+
+    addTotalGold(amount) {
+        this.totalGold += amount;
+    }
+
+    subtractTotalGold(amount) {
+        if (this.totalGold >= amount) {
+            this.totalGold -= amount;
+        } else {
+            console.warn("Not enough gold to subtract the specified amount.");
+        }
+    }
+
+    getTotalGold() {
+        return this.totalGold;
     }
 }

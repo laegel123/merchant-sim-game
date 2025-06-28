@@ -6,61 +6,36 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-    <h1>Merchant Sim Game</h1>
-    <div class="gold">
-        <div>
-            Gold: <span id="gold">0</span><br />
-        </div>
-        <div>
-            <a href="javascript:addMerchant()" id="hire-merchant">Hire Merchant</a>
+    <div class="sticky-status-bar">
+        <div class="status">
+            <div class="status-info">
+                <div class="status-label">My <br> City</div>
+                <div id="my-city" class="status-cont">0</div>
+            </div>
+    
+            <div class="status-info">
+                <div class="status-label">Total <br> Gold</div>
+                <div id="total-gold" class="status-cont">0</div>
+            </div>
+    
+            <div class="status-info">
+                <div class="status-label">My <br> Gold</div>
+                <div id="my-gold" class="status-cont">0</div>
+            </div>
         </div>
     </div>
-    <div class="flex-container">
+
+    <div class="right-fixed-menu">
+        <button onclick="openMerchantPopup()">merchants</button>
+        <button onclick="showQuests()">Quests</button>
+        <button onclick="toggleSettings()">Settings</button>
+    </div>
+
+    <div class="bg-container">
         <div class="map-container">
             <img src="lands_of_the_ancients.svg" id="mapImage" alt="Map" />
             <svg id="mapLines" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none;"></svg>
             <div id="markers"></div>
-        </div>
-
-        <div class="product">
-            <div class="city-name">
-                <h2 id="city-name">City</h2>
-                <div id="city-info"></div>
-            </div>
-            <div class="selling-products">
-                <h2>Selling</h2>
-                <ul id="selling-items">
-                    <!-- Product items will be dynamically added here -->
-                </ul>
-            </div>
-            <div class="wanting-products">
-                <h2>Wanting</h2>
-                <ul id="wanting-items">
-                    <!-- Want items will be dynamically added here -->
-                </ul>
-            </div>
-            <div class="your-merchants">
-                <h2>Your Merchants</h2>
-                <ul id="your-merchants">
-                    <!-- Your merchants will be dynamically added here -->
-                </ul>
-            </div>
-        </div>
-
-        <div class="inventory">
-            <div class="merchant-list">
-                <h2>Merchant</h2>
-                <ul id="merchant-items">
-                    <!-- Merchant items will be dynamically added here -->
-                </ul>
-            </div>
-            <div class="inventory-products">
-                <h2>Inventory</h2>
-                <ul id="inventory-items">
-                    <!-- Inventory items will be dynamically added here -->
-                </ul>
-            </div>
-            
         </div>
     </div>
 

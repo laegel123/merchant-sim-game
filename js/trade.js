@@ -1,32 +1,131 @@
 import { Product } from '../class/product.js';
-import { cities, goldManager, renderGold } from '../main.js';
+import { myCity, cities, goldManager, renderStatus } from '../main.js';
 
-export function openTradePopup(merchant, cityName) {
-    const city = cities.find(c => c.name === cityName);
+
+function openMyTradePopup(merchant) {
+    const merchantCityName = merchant.city;
+    if (myCity !== merchantCityName) {
+        alert(`You can only trade with merchants in your current city: ${myCity}.`);
+        return;
+    }
+
+    if (document.getElementById('my-merchant-gold-popup')) {
+        document.getElementById('my-merchant-gold-popup').remove();
+        document.getElementById('my-merchant-inventory-popup').remove();
+    }
+
 
     const popup = document.createElement('div');
-    popup.style.position = 'fixed';
-    popup.style.top = '50%';
-    popup.style.left = '50%';
-    popup.style.transform = 'translate(-50%, -50%)';
-    popup.style.backgroundColor = 'white';
-    popup.style.padding = '20px';
-    popup.style.border = '2px solid black';
-    popup.style.zIndex = '1000';
-    popup.style.width = '400px';
-
+    popup.id = 'my-merchant-gold-popup';
+    popup.className = 'merchant-right-top-popup';
     popup.innerHTML = `
-        <div style="display:flex; justify-content: space-between; margin-bottom: 10px;">
-            <button id="sell-tab">Sell</button>
-            <button id="buy-tab">Buy</button>
+        <h3>Trade Gold</h3>
+        <hr />
+        <div style="margin-bottom: 10px;">
+            <label>Your Gold: ${goldManager.getMyGold()}</label>
         </div>
-        <div id="trade-content"></div>
-        <button id="close-popup">Close</button>
+        <div style="margin-bottom: 10px;">
+            <label>${merchant.name}'s Gold: ${merchant.getGold()}</label>
+        </div>
+        <div style="margin-bottom: 10px;">
+            <input type="number" id="gold-amount" placeholder="Gold amount" />
+            <div class="mt-20">
+                <button id="give-gold">Give Gold to Merchant</button>
+                <button id="take-gold">Take Gold from Merchant</button>
+            </div>
+        </div>
     `;
 
     document.body.appendChild(popup);
+    
 
-    document.getElementById('close-popup').onclick = () => {
+
+    document.getElementById('give-gold').onclick = () => {
+        const amount = parseInt(document.getElementById('gold-amount').value);
+        if (!isNaN(amount) && amount > 0 && goldManager.getMyGold() >= amount) {
+            merchant.addGold(amount);
+            goldManager.subtractMyGold(amount);
+            renderStatus();
+            document.getElementById('my-merchant-gold-popup').remove();
+            document.getElementById('my-merchant-inventory-popup').remove();
+            // popup.remove();
+            openMyTradePopup(merchant);
+            alert(`Gave ${amount} gold to ${merchant.name}.`);
+        } else {
+            alert("Invalid amount or not enough gold.");
+        }
+    };
+
+    document.getElementById('take-gold').onclick = () => {
+        const amount = parseInt(document.getElementById('gold-amount').value);
+        if (!isNaN(amount) && amount > 0 && merchant.getGold() >= amount) {
+            merchant.subtractGold(amount);
+            goldManager.addMyGold(amount);
+            renderStatus();
+            popup.remove();
+            openMyTradePopup(merchant);
+            alert(`Took ${amount} gold from ${merchant.name}.`);
+        } else {
+            alert("Invalid amount or merchant doesn't have enough gold.");
+        }
+    };
+
+    const popup2 = document.createElement('div');
+    popup2.id = 'my-merchant-inventory-popup';
+    popup2.className = 'merchant-right-bottom-popup';
+    popup2.innerHTML = `
+        <h3>${merchant.name}'s Inventory</h3>
+        <hr />
+        <div style="margin-bottom: 10px;">
+            <ul id="merchant-inventory-list"></ul>
+        </div>
+    `;
+
+    document.body.appendChild(popup2);
+
+    const inventoryList = popup2.querySelector('#merchant-inventory-list');
+    if (merchant.products && merchant.products.length > 0) {
+        merchant.products.forEach(product => {
+            const li = document.createElement('li');
+            li.textContent = `${product.item} (x${product.qty}) - ${product.price} gold each`;
+            inventoryList.appendChild(li);
+        });
+    }
+    
+
+
+
+}
+
+function openMerchantTradePopup(merchant, cityName) {
+    if (document.getElementById('merchant-trade-popup')) {
+        return;
+    }
+    const city = cities.find(c => c.name === cityName);
+    const popup = document.createElement('div');
+    popup.className = 'merchant-popup';
+    popup.id = 'merchant-trade-popup';
+
+    popup.innerHTML = `
+        <h3>${merchant.name} (${merchant.city})</h3>
+        <div>city : ${merchant.city}</div>
+        <div>gold : ${merchant.getGold()}</div>
+        <button id="close-popup-btn" class="close-popup-btn">Close</button>
+        <div style="padding: 10px">
+            <hr />
+            <div id="tab-container" style="display: flex; margin-bottom: 10px; border-bottom: 2px solid #999;">
+                <div id="buy-tab" style="flex: 1; text-align: center; padding: 10px; cursor: pointer;">Buy</div>
+                <div id="sell-tab" style="flex: 1; text-align: center; padding: 10px; cursor: pointer;">Sell</div>
+            </div>
+            <div id="trade-content"></div>
+        </div>
+    `;
+
+    document.body.appendChild(popup);
+    
+    
+
+    document.getElementById('close-popup-btn').onclick = () => {
         popup.remove();
     };
 
@@ -34,50 +133,94 @@ export function openTradePopup(merchant, cityName) {
     const sellTab = popup.querySelector('#sell-tab');
     const buyTab = popup.querySelector('#buy-tab');
 
-    sellTab.onclick = () => renderSellView();
-    buyTab.onclick = () => renderBuyView();
+    // Add style for active-tab
+    const style = document.createElement('style');
+    style.textContent = `
+        .active-tab {
+            background-color: #f0e6d2;
+            font-weight: bold;
+            border: 2px solid #555;
+            border-bottom: none;
+            border-radius: 5px 5px 0 0;
+        }
+    `;
+    popup.appendChild(style);
+
+    function activateTab(tabButton, renderFn) {
+        sellTab.classList.remove('active-tab');
+        buyTab.classList.remove('active-tab');
+        tabButton.classList.add('active-tab');
+        renderFn();
+    }
+
+    sellTab.onclick = () => activateTab(sellTab, renderSellView);
+    buyTab.onclick = () => activateTab(buyTab, renderBuyView);
 
     function renderSellView() {
+        // const productList = merchant.getAvailableSellProductsInCity(city) || [];
         const productList = merchant.products || [];
         let totalSellGold = 0;
 
         tradeContent.innerHTML = `
-            <div><strong>${merchant.name} (${merchant.city})</strong></div>
             <hr />
-            <div style="display: flex; justify-content: space-between;">
-                <div><strong>Owned Items</strong></div>
-                <div><strong>Items to Sell</strong></div>
-            </div>
-            <div style="display: flex; justify-content: space-between;">
+            <div style="display: flex; flex-direction: column; justify-content: space-between; padding-bottom: 10px;">
+                <div style="text-align: center;"><strong>Owned Items</strong></div>
                 <ul id="owned-items"></ul>
+            </div>
+            <div style="display: flex; flex-direction: column; justify-content: space-between;">
+                <div style="text-align: center;"><strong>Items to Sell</strong></div>
                 <ul id="selected-items"></ul>
             </div>
-            <div style="margin-top: 10px;">Sell Gold: <span id="sell-total">${totalSellGold}</span></div>
+            <div style="margin-top: 10px; text-align: center">Sell Gold: <span id="sell-total">${totalSellGold}</span></div>
+            <button id="confirm-sell" style="margin-top: 10px;">Sell</button>
         `;
 
         const ownedList = tradeContent.querySelector('#owned-items');
         const selectedList = tradeContent.querySelector('#selected-items');
         const sellTotal = tradeContent.querySelector('#sell-total');
+        let sellItems = [];
 
         productList.forEach(p => {
             const li = document.createElement('li');
-            li.textContent = `${p.name} [+]`;
+            li.textContent = `${p.item}(${p.price + city.profit}) x${p.qty} [+]`;
             li.style.cursor = 'pointer';
             li.onclick = () => {
-                const qtyStr = prompt(`How many units of ${p.name} would you like to sell?`, '1');
+                const qtyStr = prompt(`How many units of ${p.item} would you like to sell?`, '1');
                 const qty = parseInt(qtyStr);
                 if (!isNaN(qty) && qty > 0) {
-                    const cityPrice = city.wanting.find(w => w.item === p.name)?.price || 0;
-                    totalSellGold += cityPrice * qty;
+                    totalSellGold += p.price * qty;
                     sellTotal.textContent = totalSellGold;
 
+                    const existing = sellItems.find(i => i.item === p.item);
+                    if (existing) {
+                        existing.qty += qty;
+                    } else {
+                        sellItems.push({ item: p.item, price: p.price + city.profit, qty });
+                    }
+
                     const selectedLi = document.createElement('li');
-                    selectedLi.textContent = `${p.name} x${qty}`;
+                    selectedLi.textContent = `${p.item}(${p.price + city.profit}) x${qty}`;
                     selectedList.appendChild(selectedLi);
                 }
             };
             ownedList.appendChild(li);
         });
+
+        const confirmSellBtn = tradeContent.querySelector('#confirm-sell');
+        confirmSellBtn.onclick = () => {
+            if (totalSellGold > 0 && confirm(`Sell selected items for ${totalSellGold} gold?`)) {
+                merchant.addGold(totalSellGold);
+                goldManager.addTotalGold(totalSellGold);
+
+                sellItems.forEach(i => {
+                    const product = new Product(i.item, i.qty, i.price);
+                    merchant.subtractProduct(product);
+                });
+
+                renderStatus();
+                popup.remove();
+            }
+        };
     }
 
     function renderBuyView() {
@@ -85,53 +228,103 @@ export function openTradePopup(merchant, cityName) {
         let totalBuyGold = 0;
 
         tradeContent.innerHTML = `
-            <div><strong>${merchant.name} (${merchant.city})</strong></div>
             <hr />
-            <div style="display: flex; justify-content: space-between;">
-                <div><strong>City is Selling</strong></div>
-                <div><strong>Items to Buy</strong></div>
-            </div>
-            <div style="display: flex; justify-content: space-between;">
+            <div style="display: flex; flex-direction: column; justify-content: space-between; padding-bottom: 10px;">
+                <div style="text-align: center;"><strong>City is Selling</strong></div>
                 <ul id="selling-items"></ul>
+            </div>
+            <div style="display: flex; flex-direction: column; justify-content: space-between;">
+                <div style="text-align: center;"><strong>Items to Buy</strong></div>
                 <ul id="buying-items"></ul>
             </div>
-            <div style="margin-top: 10px;">Total Cost: <span id="buy-total">${totalBuyGold}</span></div>
+            <div style="margin-top: 10px; text-align: center;">Total Cost: <span id="buy-total">${totalBuyGold}</span></div>
+            <button id="confirm-buy" style="margin-top: 10px;">Buy</button>
         `;
 
         const sellingList = tradeContent.querySelector('#selling-items');
         const buyingList = tradeContent.querySelector('#buying-items');
         const buyTotal = tradeContent.querySelector('#buy-total');
+        let buyItems = [];
 
         citySelling.forEach(p => {
             const li = document.createElement('li');
-            li.textContent = `${p.item} : ${p.price} gold [+]`;
-            li.style.cursor = 'pointer';
-            li.onclick = () => {
-                const qtyStr = prompt(`How many units of ${p.item} would you like to buy?`, '1');
+            const itemHTML = document.createElement('div');
+            itemHTML.innerHTML = `${p.item} : ${p.price} gold <button class="add-item">+</button> <button class="remove-item">-</button>`;
+            li.appendChild(itemHTML);
+            sellingList.appendChild(li);
+
+            const addButton = itemHTML.querySelector('.add-item');
+            const removeButton = itemHTML.querySelector('.remove-item');
+
+            addButton.onclick = () => {
+                const qtyStr = prompt(`How many ${p.item} would you like to buy?`, '1');
                 const qty = parseInt(qtyStr);
                 if (!isNaN(qty) && qty > 0) {
-                    const cost = p.price * qty;
-                    if (gold >= cost) {
-                        gold -= cost;
-                        renderGold();
-                        totalBuyGold += cost;
-                        buyTotal.textContent = totalBuyGold;
-
-                        const buyLi = document.createElement('li');
-                        buyLi.textContent = `${p.item} x${qty}`;
-                        buyingList.appendChild(buyLi);
-
-                        for (let i = 0; i < qty; i++) {
-                            merchant.products.push(new Product(p.item));
-                        }
+                    const existing = buyItems.find(i => i.item === p.item);
+                    if (existing) {
+                        existing.qty += qty;
                     } else {
-                        alert("Not enough gold.");
+                        buyItems.push({ item: p.item, price: p.price, qty });
+                    }
+                    totalBuyGold += p.price * qty;
+                    updateBuyingList();
+                }
+            };
+
+            removeButton.onclick = () => {
+                const qtyStr = prompt(`How many ${p.item} would you like to remove?`, '1');
+                const qty = parseInt(qtyStr);
+                if (!isNaN(qty) && qty > 0) {
+                    const existing = buyItems.find(i => i.item === p.item);
+                    if (existing) {
+                        const removedQty = Math.min(qty, existing.qty);
+                        existing.qty -= removedQty;
+                        totalBuyGold -= p.price * removedQty;
+                        if (existing.qty <= 0) {
+                            buyItems = buyItems.filter(i => i.item !== p.item);
+                        }
+                        updateBuyingList();
                     }
                 }
             };
-            sellingList.appendChild(li);
         });
+
+        function updateBuyingList() {
+            buyingList.innerHTML = '';
+            buyItems.forEach(i => {
+                const li = document.createElement('li');
+                li.textContent = `${i.item} x${i.qty}`;
+                buyingList.appendChild(li);
+            });
+            buyTotal.textContent = totalBuyGold;
+        }
+
+        const confirmBuyBtn = tradeContent.querySelector('#confirm-buy');
+        confirmBuyBtn.onclick = () => {
+            if (totalBuyGold > 0 && confirm(`Spend ${totalBuyGold} gold to buy selected items?`)) {
+
+                if (merchant.getGold() < totalBuyGold) {
+                    alert(`${merchant.getName()} don't have enough gold to complete this purchase.`);
+                    return;
+                }
+
+                for (const i of buyItems) {
+                    merchant.addProduct(new Product(i.item, i.qty, i.price));
+                }
+
+                merchant.subtractGold(totalBuyGold);
+                goldManager.subtractTotalGold(totalBuyGold);
+
+                renderStatus();
+                alert("Purchase completed!");
+                popup.remove();
+            }
+        };
     }
 
-    renderSellView();
+    // Initialize with Buy tab active and content
+    buyTab.classList.add('active-tab');
+    renderBuyView();
 }
+
+export { openMerchantTradePopup, openMyTradePopup };

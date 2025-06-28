@@ -3,15 +3,93 @@ body {
   padding: 0;
   background-color: #f1efe6;
   list-style: none;
+
+
+  /* Remove arrows from number input fields */
+  input[type=number]::-webkit-inner-spin-button,
+  input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type=number] {
+    -moz-appearance: textfield;
+  }
 }
 
-.gold {
+.mt-20 {
+  margin-top: 20px;
+}
+
+.status {
   display: flex;
   gap: 20px;
-  flex-direction: row-reverse;
-  text-align: right;
-  padding-right: 20px;
-  margin-bottom: 10px;
+  margin: 20px;
+}
+
+.sticky-status-bar {
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  background-color: #f1efe6;
+  border-bottom: 2px solid #c0b9a8;
+  padding: 10px 0;
+}
+
+.status-info {
+  background-image: url('/assets/status_info_bg.png');
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  width: 250px;
+  height: 90px;
+  position: relative;
+  font-family: 'Garamond', serif;
+  font-size: 16px;
+  color: #3b2f2f;
+}
+
+.status-info .status-label {
+  position: absolute;
+  top: 28px;
+  left: 23px;
+  color: #c89e7c;
+  font-weight: bold;
+}
+
+.status-info .status-cont {
+  position: absolute;
+  top: 35px;
+  right: 70px;
+  font-weight: bold;
+}
+
+.right-fixed-menu {
+  position: fixed;
+  top: 200px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  padding: 10px;
+  z-index: 1000;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+}
+
+.right-fixed-menu button {
+  padding: 8px 12px;
+  font-size: 14px;
+  border: none;
+  background-color: #e0d6b8;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.right-fixed-menu button:hover {
+  background-color: #cbbf9f;
 }
 
 #mapImage {
@@ -73,6 +151,8 @@ body {
 .map-container {
   flex: 6;
   position: relative;
+  width: 80%;
+  margin: 0 auto;
 }
 
 .product {
@@ -147,4 +227,141 @@ body {
   padding-left: 16px;
   list-style-type: disc;
   margin: 0;
+}
+
+
+/* popup */
+
+input[type="number"] {
+  padding: 6px;
+  font-family: 'Garamond', serif;
+  border: 1px solid #6b4c3b;
+  margin-right: 10px;
+  width: 100px;
+}
+
+
+.active-tab {
+    background-color: #f0e6d2;
+    font-weight: bold;
+    border: 2px solid #555;
+    border-bottom: none;
+    border-radius: 5px 5px 0 0;
+}
+
+
+.merchant-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-image: url("../assets/memo_vertical.png");
+    background-size: cover;
+    width: 300px;
+    height: 500px;
+    padding: 20px;
+    overflow-y: auto;
+    z-index: 1000;
+    color: black;
+    font-family: serif;
+}
+
+.merchant-right-top-popup {
+    position: fixed;
+    top: 30%;
+    left: 80%;
+    transform: translate(-50%, -50%);
+    background-image: url("../assets/memo_horizental2.png");
+    background-size: cover;
+    width: 320px;
+    height: 220px;
+    padding: 20px;
+    overflow-y: auto;
+    z-index: 1000;
+    color: black;
+    font-family: serif;
+}
+
+.merchant-right-bottom-popup {
+    position: fixed;
+    top: 70%;
+    left: 80%;
+    transform: translate(-50%, -50%);
+    background-image: url("../assets/memo_horizental2.png");
+    background-size: cover;
+    width: 320px;
+    height: 220px;
+    padding: 20px;
+    overflow-y: auto;
+    z-index: 1000;
+    color: black;
+    font-family: serif;
+}
+
+.merchant-popup h3 {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.merchant-right-top-popup h3 {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.merchant-right-bottom-popup h3 {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.popup-close-btn {
+  position: absolute;
+  top: 35px;
+  right: 10px;
+}
+
+.popup-action-btn {
+  display: block;
+  margin: 20px auto 10px auto;
+  padding: 8px 16px;
+  background-color: #a87c4f;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-family: 'Garamond', serif;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.popup-action-btn:hover {
+  background-color: #c89e7c;
+}
+
+.popup-button-bottom-container {
+    position: absolute;
+    bottom: 40px;
+    width: 90%;
+    text-align: center;
+}
+
+
+
+.city-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-image: url("../assets/map.png");
+    background-size: cover;
+    width: 70%;
+    height: 90%;
+    padding: 20px;
+    overflow-y: auto;
+    z-index: 1000;
+    color: black;
+    font-family: serif;
+}
+
+.city-popup h2 {
+  text-align: center;
+  margin-top: 20px;
 }
