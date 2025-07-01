@@ -5,6 +5,7 @@ export class Merchant {
         this.gold = 0;
         this.status = 'wait'; // wait, moving
         this.products = [];
+        this.movingInfo = null;
     }
 
     addProduct(product) {
@@ -34,6 +35,14 @@ export class Merchant {
 
     changeCity(city) {
         this.city = city;
+    }
+
+    changeStatus(status) {
+        if (['wait', 'moving'].includes(status)) {
+            this.status = status;
+        } else {
+            console.warn("Invalid status. Use 'wait' or 'moving'.");
+        }
     }
 
     addGold(amount) {
@@ -86,10 +95,25 @@ export class MerchantManager {
         const connectedCities = city.connections || [];
 
         const availableMerchants = this.merchants.filter(m => {
-            return m.status === 'wait' && 
-                   (connectedCities.includes(m.city));
+            return m.status === 'wait' && (connectedCities.some(conn => conn.name === m.city));
         });
 
         return availableMerchants;
+    }
+
+    getMerchantByName(name) {
+        return this.merchants.find(m => m.name === name);
+    }
+
+    setMerchants(merchantDataList) {
+        this.merchants = merchantDataList.map(data => {
+            const merchant = new Merchant(data.name, data.city);
+            merchant.status = data.status;
+            merchant.gold = data.gold;
+            merchant.products = data.products || [];
+            merchant.movingInfo = data.movingInfo || null;
+
+            return merchant;
+        });
     }
 }

@@ -35,4 +35,13 @@ export class Gold {
     getTotalGold() {
         return this.totalGold;
     }
+
+    setMyGold(myGold) {
+        this.myGold = myGold;
+    }
+
+    setTotalGold(totalGold) {
+        this.totalGold = totalGold;
+    }
+    
 }

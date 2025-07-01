@@ -1,6 +1,22 @@
 import { cities, openMerchantTradePopup, merchantManager } from "../main.js";
 
 function createMarkers(cities) {
+        // Add animated-line CSS style if not already present
+    if (!document.getElementById('animated-line-style')) {
+        const style = document.createElement('style');
+        style.id = 'animated-line-style';
+        style.innerHTML = `
+        @keyframes dash-move {
+          to { stroke-dashoffset: 1000; }
+        }
+        .animated-line {
+          stroke-dasharray: 6 4;
+          stroke-dashoffset: 0;
+          animation: dash-move 30s linear infinite;
+        }`;
+        document.head.appendChild(style);
+    }
+
     const markersDiv = document.getElementById('markers');
     const mapImage = document.getElementById('mapImage');
     const mapWidth = mapImage.naturalWidth;
@@ -60,16 +76,21 @@ function createMarkers(cities) {
             circle.setAttribute("cy", `${(y / mapHeight) * 230}%`);
             circle.setAttribute("r", "4%");
             circle.setAttribute("stroke", "blue");
-            circle.setAttribute("stroke-width", "2");
+            circle.setAttribute("stroke-width", "3");
             circle.setAttribute("fill", "none");
             svg.appendChild(circle);
 
-            document.querySelectorAll('#mapLines line').forEach(line => line.setAttribute('stroke', 'black'));
+            document.querySelectorAll('#mapLines line').forEach(line => {
+                line.setAttribute('stroke', 'black')
+                line.setAttribute("stroke-width", "3");
+            });
+            
             if (city.connections) {
-                city.connections.forEach(targetName => {
-                    const key = [city.name, targetName].sort().join('-');
+                city.connections.forEach(target => {
+                    const key = [city.name, target.name].sort().join('-');
                     document.querySelectorAll(`#mapLines line[data-key="${key}"]`).forEach(line => {
                         line.setAttribute('stroke', 'blue');
+                        line.setAttribute('stroke-width', '3');
                     });
                 });
             }
@@ -167,15 +188,8 @@ function createMarkers(cities) {
                 const movePopup = document.createElement('div');
                 movePopup.id = 'move-popup';
                 movePopup.className = 'move-popup';
-                movePopup.style.position = 'absolute';
                 movePopup.style.left = `${marker.offsetLeft + 169}px`;
                 movePopup.style.top = `${marker.offsetTop + 180}px`;
-                movePopup.style.zIndex = '1000';
-                movePopup.style.backgroundColor = '#f9f3db';
-                movePopup.style.border = '1px solid #333';
-                movePopup.style.padding = '10px';
-                movePopup.style.borderRadius = '5px';
-                movePopup.style.maxWidth = '300px';
 
                 const merchants = merchantManager.getMerchantsAvailableToMoveCity(city);
                 if (merchants.length === 0) {
@@ -191,8 +205,64 @@ function createMarkers(cities) {
                     link.addEventListener('click', (e) => {
                         e.preventDefault();
                         const merchantName = e.target.getAttribute('data-merchant');
-                        alert(`Movement started for ${merchantName}!`);
+                        const confirmMove = confirm("Do you want to move this merchant?");
+                        if (!confirmMove) return;
+
+                        const merchant = merchantManager.getMerchantByName(merchantName);
+                        if (!merchant) return;
+
+                        const targetCityName = city.name;
+                        const connection = city.connections.find(conn => conn.name === merchant.city);
+                        const travelTime = connection ? connection.travelTime : 30; // fallback default
+
+                        // Animate the connection line
+                        const lineKey = [merchant.city, targetCityName].sort().join('-');
+                        const animatedLine = document.querySelector(`#mapLines line[data-key="${lineKey}"]`);
+                        if (animatedLine) {
+                            const x1 = parseFloat(animatedLine.getAttribute("x1"));
+                            const y1 = parseFloat(animatedLine.getAttribute("y1"));
+                            const x2 = parseFloat(animatedLine.getAttribute("x2"));
+                            const y2 = parseFloat(animatedLine.getAttribute("y2"));
+
+                            const fromCity = cities.find(c => c.name === merchant.city);
+                            const toCity = cities.find(c => c.name === targetCityName);
+
+                            const fromX = (fromCity.q * 32 + 16) / mapWidth * 200;
+                            const fromY = (fromCity.r * 28 + 14) / mapHeight * 230;
+
+                            const closeEnough = (a, b) => Math.abs(a - b) < 1;
+
+                            const correctDirection = closeEnough(x1, fromX) && closeEnough(y1, fromY);
+
+                            animatedLine.classList.remove('animated-line');
+                            void animatedLine.offsetWidth; // force reflow
+                            animatedLine.classList.add('animated-line');
+                            animatedLine.style.animationDirection = correctDirection ? 'reverse' : 'normal';
+                        }
+
+                        const startTime = Date.now();
+                        const endTime = startTime + travelTime * 1000;
+                        merchant.movingInfo = {
+                            from: merchant.city,
+                            to: targetCityName,
+                            startTime: startTime,
+                            travelTime: travelTime,
+                            remaining: Math.max(0, Math.floor((endTime - startTime) / 1000))
+                        };
+                        merchant.status = 'moving';
                         movePopup.remove();
+
+                        setTimeout(() => {
+                            merchant.city = targetCityName;
+                            merchant.status = 'wait';
+                            merchant.movingInfo = null;
+                            // Remove animation after arrival
+                            if (animatedLine) {
+                                animatedLine.classList.remove('animated-line');
+                                animatedLine.style.animationDirection = '';
+                            }
+                            alert(`${merchant.name} has arrived in ${targetCityName}`);
+                        }, travelTime * 1000);
                     });
                 });
             };
@@ -207,9 +277,9 @@ function createMarkers(cities) {
         const startX = city.q * 32 + 16;
         const startY = city.r * 28 + 14;
 
-        city.connections.forEach(targetName => {
-            const targetCity = cities.find(c => c.name === targetName);
-            const key = [city.name, targetName].sort().join('-');
+        city.connections.forEach(target => {
+            const targetCity = cities.find(c => c.name === target.name);
+            const key = [city.name, target.name].sort().join('-');
             if (drawnConnections.has(key)) return;
             if (!targetCity) return;
 
@@ -222,9 +292,32 @@ function createMarkers(cities) {
             line.setAttribute("x2", `${(endX / mapWidth) * 200}%`);
             line.setAttribute("y2", `${(endY / mapHeight) * 230}%`);
             line.setAttribute("stroke", "black");
-            line.setAttribute("stroke-width", "1");
+            line.setAttribute("stroke-width", "3");
             line.setAttribute("stroke-dasharray", "4 2");
             line.setAttribute("data-key", key);
+            svg.appendChild(line);
+
+
+            const midX = (startX + endX) / 1.4;
+            const midY = (startY + endY) / 1.4 + 120;
+
+            // Insert HTML tooltip at the midpoint
+            const tooltip = document.createElement('div');
+            tooltip.className = 'connection-tooltip';
+            tooltip.style.position = 'absolute';
+            tooltip.style.left = `${midX}px`;
+            tooltip.style.top = `${midY}px`;
+            tooltip.style.background = 'white';
+            tooltip.style.border = '1px solid black';
+            tooltip.style.padding = '5px 10px';
+            tooltip.style.borderRadius = '5px';
+            tooltip.style.fontSize = '12px';
+            tooltip.style.fontWeight = 'bold';
+            tooltip.style.zIndex = '500';
+            tooltip.style.opacity = '0.75';
+            tooltip.innerHTML = `Risk: ${target.riskLevel}<br>L: ${target.distance} km<br>T: ${target.travelTime} sec`;
+            document.body.appendChild(tooltip);
+
             svg.appendChild(line);
             drawnConnections.add(key);
         });

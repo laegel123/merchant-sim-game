@@ -1,8 +1,9 @@
 body {
-  margin: 0;
-  padding: 0;
-  background-color: #f1efe6;
-  list-style: none;
+    margin: 0;
+    padding: 0;
+    background-color: #f1efe6;
+    list-style: none;
+}
 
 
   /* Remove arrows from number input fields */
@@ -364,4 +365,15 @@ input[type="number"] {
 .city-popup h2 {
   text-align: center;
   margin-top: 20px;
+}
+
+
+.move-popup {
+  position: absolute;
+  z-index: 1000;
+  background-color: #f9f3db;
+  border: 1px solid #333;
+  padding: 10px;
+  border-radius: 5px;
+  max-width: 300px;
 }
