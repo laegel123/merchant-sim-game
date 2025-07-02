@@ -62,6 +62,8 @@ function openMyTradePopup(merchant) {
             merchant.subtractGold(amount);
             goldManager.addMyGold(amount);
             renderStatus();
+            document.getElementById('my-merchant-gold-popup').remove();
+            document.getElementById('my-merchant-inventory-popup').remove();
             popup.remove();
             openMyTradePopup(merchant);
             alert(`Took ${amount} gold from ${merchant.name}.`);
@@ -108,9 +110,11 @@ function openMerchantTradePopup(merchant, cityName) {
 
     popup.innerHTML = `
         <h3>${merchant.name} (${merchant.city})</h3>
-        <div>city : ${merchant.city}</div>
-        <div>gold : ${merchant.getGold()}</div>
-        <button id="close-popup-btn" class="close-popup-btn">Close</button>
+        <div style="padding: 10px">
+            <div>city : ${merchant.city}</div>
+            <div>gold : ${merchant.getGold()}</div>
+        </div>
+        <button id="popup-close-btn2" class="popup-close-btn"><img src="/assets/icon/close-circle.svg" alt="Close" class="popup-close-icon" /></button>
         <div style="padding: 10px">
             <hr />
             <div id="tab-container" style="display: flex; margin-bottom: 10px; border-bottom: 2px solid #999;">
@@ -125,7 +129,7 @@ function openMerchantTradePopup(merchant, cityName) {
     
     
 
-    document.getElementById('close-popup-btn').onclick = () => {
+    document.getElementById('popup-close-btn2').onclick = () => {
         popup.remove();
     };
 
@@ -162,17 +166,17 @@ function openMerchantTradePopup(merchant, cityName) {
         let totalSellGold = 0;
 
         tradeContent.innerHTML = `
-            <hr />
             <div style="display: flex; flex-direction: column; justify-content: space-between; padding-bottom: 10px;">
-                <div style="text-align: center;"><strong>Owned Items</strong></div>
+                <div style="text-align: center; margin-bottom: 10px"><strong>Owned Items</strong></div>
                 <ul id="owned-items"></ul>
             </div>
-            <div style="display: flex; flex-direction: column; justify-content: space-between;">
-                <div style="text-align: center;"><strong>Items to Sell</strong></div>
+            <hr />
+            <div style="display: flex; flex-direction: column; justify-content: space-between; margin-top: 10px">
+                <div style="text-align: center; margin-bottom: 10px"><strong>Items to Sell</strong></div>
                 <ul id="selected-items"></ul>
             </div>
             <div style="margin-top: 10px; text-align: center">Sell Gold: <span id="sell-total">${totalSellGold}</span></div>
-            <button id="confirm-sell" style="margin-top: 10px;">Sell</button>
+            <button id="confirm-sell" class="confirm-btn">Sell</button>
         `;
 
         const ownedList = tradeContent.querySelector('#owned-items');
@@ -228,17 +232,17 @@ function openMerchantTradePopup(merchant, cityName) {
         let totalBuyGold = 0;
 
         tradeContent.innerHTML = `
-            <hr />
             <div style="display: flex; flex-direction: column; justify-content: space-between; padding-bottom: 10px;">
-                <div style="text-align: center;"><strong>City is Selling</strong></div>
+                <div style="text-align: center; margin-bottom: 10px"><strong>City is Selling</strong></div>
                 <ul id="selling-items"></ul>
             </div>
-            <div style="display: flex; flex-direction: column; justify-content: space-between;">
-                <div style="text-align: center;"><strong>Items to Buy</strong></div>
+            <hr />
+            <div style="display: flex; flex-direction: column; justify-content: space-between; margin-top: 10px">
+                <div style="text-align: center; margin-bottom: 10px"><strong>Items to Buy</strong></div>
                 <ul id="buying-items"></ul>
             </div>
             <div style="margin-top: 10px; text-align: center;">Total Cost: <span id="buy-total">${totalBuyGold}</span></div>
-            <button id="confirm-buy" style="margin-top: 10px;">Buy</button>
+            <button id="confirm-buy" class="confirm-btn">Buy</button>
         `;
 
         const sellingList = tradeContent.querySelector('#selling-items');
@@ -249,7 +253,13 @@ function openMerchantTradePopup(merchant, cityName) {
         citySelling.forEach(p => {
             const li = document.createElement('li');
             const itemHTML = document.createElement('div');
-            itemHTML.innerHTML = `${p.item} : ${p.price} gold <button class="add-item">+</button> <button class="remove-item">-</button>`;
+            itemHTML.innerHTML = `${p.item} : ${p.price} gold 
+                <button class="add-item" style="margin-left: 6px; margin-top: 2px; vertical-align: middle;">
+                    <img src="/assets/icon/plus-circle.svg" alt="Add" style="width: 16px; height: 16px;" />
+                </button> 
+                <button class="remove-item" style="margin-left: 4px; margin-top: 2px; vertical-align: middle;">
+                    <img src="/assets/icon/minus-circle.svg" alt="Remove" style="width: 16px; height: 16px;" />
+                </button>`;
             li.appendChild(itemHTML);
             sellingList.appendChild(li);
 

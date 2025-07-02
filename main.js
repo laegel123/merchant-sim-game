@@ -246,6 +246,7 @@ function openMerchantPopup() {
         popup.appendChild(emptyMsg);
     } else {
         const ul = document.createElement('ul');
+        ul.style.marginTop = '50px';
         merchantList.forEach(m => {
             const li = document.createElement('li');
             const link = document.createElement('a');
@@ -262,7 +263,7 @@ function openMerchantPopup() {
     }
 
     const closeBtn = document.createElement('button');
-    closeBtn.textContent = 'Close';
+    closeBtn.innerHTML = '<img src="/assets/icon/close-circle.svg" alt="Close" class="popup-close-icon" />';
     closeBtn.classList.add('popup-close-btn');
     closeBtn.onclick = () => {
         const childPopup1 = document.getElementById('my-merchant-gold-popup');

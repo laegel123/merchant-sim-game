@@ -114,7 +114,7 @@ function createMarkers(cities) {
                 popup.innerHTML = `
                     <div style="padding: 50px;">
                         <h2>${city.name}</h2>
-                        <button id="popup-close-btn" class="popup-close-btn">Close</button>
+                        <button id="popup-close-btn" class="popup-close-btn"><img src="/assets/icon/close-circle.svg" alt="Close" class="popup-close-icon" /></button>
                         <hr/>
                         <div style="display: flex; justify-content: space-between;">
                             <div style="flex: 1;">
@@ -299,7 +299,7 @@ function createMarkers(cities) {
 
 
             const midX = (startX + endX) / 1.4;
-            const midY = (startY + endY) / 1.4 + 120;
+            const midY = (startY + endY) / 1.4 + 70;
 
             // Insert HTML tooltip at the midpoint
             const tooltip = document.createElement('div');
