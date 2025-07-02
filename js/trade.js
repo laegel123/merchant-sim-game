@@ -4,10 +4,10 @@ import { myCity, cities, goldManager, renderStatus } from '../main.js';
 
 function openMyTradePopup(merchant) {
     const merchantCityName = merchant.city;
-    if (myCity !== merchantCityName) {
-        alert(`You can only trade with merchants in your current city: ${myCity}.`);
-        return;
-    }
+    // if (myCity !== merchantCityName) {
+    //     alert(`You can only trade with merchants in your current city: ${myCity}.`);
+    //     return;
+    // }
 
     if (document.getElementById('my-merchant-gold-popup')) {
         document.getElementById('my-merchant-gold-popup').remove();
@@ -41,6 +41,11 @@ function openMyTradePopup(merchant) {
 
 
     document.getElementById('give-gold').onclick = () => {
+        if (myCity !== merchantCityName) {
+            alert(`You can only trade with merchants in your current city: ${myCity}.`);
+            return;
+        }
+
         const amount = parseInt(document.getElementById('gold-amount').value);
         if (!isNaN(amount) && amount > 0 && goldManager.getMyGold() >= amount) {
             merchant.addGold(amount);
@@ -57,6 +62,11 @@ function openMyTradePopup(merchant) {
     };
 
     document.getElementById('take-gold').onclick = () => {
+        if (myCity !== merchantCityName) {
+            alert(`You can only trade with merchants in your current city: ${myCity}.`);
+            return;
+        }
+        
         const amount = parseInt(document.getElementById('gold-amount').value);
         if (!isNaN(amount) && amount > 0 && merchant.getGold() >= amount) {
             merchant.subtractGold(amount);
