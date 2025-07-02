@@ -66,11 +66,12 @@ export class Merchant {
     }
 
     getAvailableSellProductsInCity(city) {
-        const wanting = city.wanting || [];
-        return this.products.filter(p => {
-            wanting.includes(p.item) && p.qty > 0;
-        });
-    }
+    const wanting = city.wanting || [];
+
+    return this.products.filter(p => {
+        return wanting.some(w => w.item === p.item) && p.qty > 0;
+    });
+}
     
 }
 

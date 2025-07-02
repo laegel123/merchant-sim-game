@@ -109,6 +109,8 @@ function createMarkers(cities) {
 
             moreBtn.onclick = () => {
                 const popup = document.createElement('div');
+                console.log('city > ', city);
+                
 
                 popup.className = 'city-popup';
                 popup.innerHTML = `

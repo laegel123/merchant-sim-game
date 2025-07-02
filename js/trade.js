@@ -66,7 +66,7 @@ function openMyTradePopup(merchant) {
             alert(`You can only trade with merchants in your current city: ${myCity}.`);
             return;
         }
-        
+
         const amount = parseInt(document.getElementById('gold-amount').value);
         if (!isNaN(amount) && amount > 0 && merchant.getGold() >= amount) {
             merchant.subtractGold(amount);
@@ -171,8 +171,8 @@ function openMerchantTradePopup(merchant, cityName) {
     buyTab.onclick = () => activateTab(buyTab, renderBuyView);
 
     function renderSellView() {
-        // const productList = merchant.getAvailableSellProductsInCity(city) || [];
-        const productList = merchant.products || [];
+        const productList = merchant.getAvailableSellProductsInCity(city) || [];
+        // const productList = merchant.products || [];
         let totalSellGold = 0;
 
         tradeContent.innerHTML = `
@@ -202,7 +202,7 @@ function openMerchantTradePopup(merchant, cityName) {
                 const qtyStr = prompt(`How many units of ${p.item} would you like to sell?`, '1');
                 const qty = parseInt(qtyStr);
                 if (!isNaN(qty) && qty > 0) {
-                    totalSellGold += p.price * qty;
+                    totalSellGold += (p.price + city.profit) * qty;
                     sellTotal.textContent = totalSellGold;
 
                     const existing = sellItems.find(i => i.item === p.item);

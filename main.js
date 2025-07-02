@@ -38,6 +38,7 @@ function load() {
         loadMerchants();
         loadGold();
         setTimeout(() => {
+            createMarkers(cities);
             renderStatus();
         }, 500);
     }
@@ -131,6 +132,8 @@ async function loadCities() {
         const response = await fetch('http://localhost:3000/api/cities/load');
         const data = await response.json();
         cities = data.cities;
+        console.log('cities >', cities);
+
     } catch (error) {
         console.error('Error loading cities:', error);
     }
