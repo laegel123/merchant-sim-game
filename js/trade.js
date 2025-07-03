@@ -30,8 +30,12 @@ function openMyTradePopup(merchant) {
         <div style="margin-bottom: 10px;">
             <input type="number" id="gold-amount" placeholder="Gold amount" />
             <div class="mt-20">
-                <button id="give-gold">Give Gold to Merchant</button>
-                <button id="take-gold">Take Gold from Merchant</button>
+                <button id="give-gold" style="background-color: #d4af37; color: white; border: none; padding: 4px; border-radius: 6px; cursor: pointer; margin-right: 10px;">
+                    Give Gold to Merchant
+                </button>
+                <button id="take-gold" style="background-color: #555; color: white; border: none; padding: 4px; border-radius: 6px; cursor: pointer;">
+                    Take Gold from Merchant
+                </button>
             </div>
         </div>
     `;
